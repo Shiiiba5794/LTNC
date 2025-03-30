@@ -119,32 +119,6 @@ void Graphics::init() {
 	background = loadTexture("img//background.jpg");
 	board = loadTexture("img//board.jpg");
 }
-void Graphics::start() {
-for (int i = 0; i < BOARD_SIZE; i++)
-		for (int j = 0; j < BOARD_SIZE; j++) {
-			int x = BOARD_X + j * CELL_SIZE;
-			int y = BOARD_Y + i * CELL_SIZE;
-			//render black chess pieces
-			if (i == 1) renderTexture(bP, x, y);
-			if (i == 0) {
-				if (j == 0||j==7) renderTexture(bR, x, y);
-				if (j == 1||j==6) renderTexture(bN, x, y);
-				if (j == 2||j==5) renderTexture(bB, x, y);
-				if (j == 3) renderTexture(bQ, x, y);
-				if (j == 4) renderTexture(bK, x, y);
-			}
-			//render white chess pieces
-			if (i == 6) renderTexture(wP, x, y);
-			if (i == 7) {
-				if (j == 0||j==7) renderTexture(wR, x, y);
-				if (j == 1||j==6) renderTexture(wN, x, y);
-				if (j == 2||j==5) renderTexture(wB, x, y);
-				if (j == 3) renderTexture(wQ, x, y);
-				if (j == 4) renderTexture(wK, x, y);
-			}
-			presentScene();
-		}
-}
 void Graphics::render(const Chess& game) {
 	prepareScene(background);
 	{	//blur board
@@ -152,6 +126,25 @@ void Graphics::render(const Chess& game) {
 		SDL_SetTextureAlphaMod(board, 210);
 	}
 	renderTexture(board, 350, 115, 400, 400);
-	start();
+	for (int i = 0; i < BOARD_SIZE; i++)
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			int x = BOARD_X + j * CELL_SIZE;
+			int y = BOARD_Y + i * CELL_SIZE;
+			switch (game.piece_positions[i][j]) {
+			case 'P': renderTexture(bP, x, y); break;
+			case 'R': renderTexture(bR, x, y); break;
+			case 'N': renderTexture(bN, x, y); break;
+			case 'B': renderTexture(bB, x, y); break;
+			case 'Q': renderTexture(bQ, x, y); break;
+			case 'K': renderTexture(bK, x, y); break;
+			case 'p': renderTexture(wP, x, y); break;
+			case 'r': renderTexture(wR, x, y); break;
+			case 'n': renderTexture(wN, x, y); break;
+			case 'b': renderTexture(wB, x, y); break;
+			case 'q': renderTexture(wQ, x, y); break;
+			case 'k': renderTexture(wK, x, y); break;
+			}
+			presentScene();
+		}
 	
 }

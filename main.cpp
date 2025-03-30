@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <SDL.h>
 #include <SDL_image.h>
 #include "defs.h"
@@ -7,20 +8,11 @@
 
 using namespace std;
 
-void waitUntilKeyPressed()
-{
-    SDL_Event e;
-    while (true) {
-        if (SDL_PollEvent(&e) != 0 &&
-            (e.type == SDL_KEYDOWN || e.type == SDL_QUIT))
-            return;
-        SDL_Delay(100);
-    }
-}
-
 void processClickAt(int x, int y, Chess& game) {
     int clickedCol = (x - BOARD_X) / CELL_SIZE;
     int clickedRow = (y - BOARD_Y) / CELL_SIZE;
+	game.moves.push_back(clickedCol);
+	game.moves.push_back(clickedRow);
 
 }
 
@@ -43,10 +35,11 @@ int main(int argc, char* argv[])
         case SDL_MOUSEBUTTONDOWN:
             SDL_GetMouseState(&x, &y);
             processClickAt(x, y, game);
+            processClickAt(x, y, game);
             graphics.render(game);
             break;
         }
-        SDL_Delay(100);
+        SDL_Delay(0);
     }
     graphics.quit();
     return 0;
