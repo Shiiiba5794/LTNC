@@ -1,4 +1,4 @@
-#include <SDL.h>
+﻿#include <SDL.h>
 #include <SDL_image.h>
 #include "graphics.h"
 #include "logics.h"
@@ -55,34 +55,40 @@ void Graphics::renderTexture(SDL_Texture* texture, int x, int y)
 	SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
 	SDL_RenderCopy(renderer, texture, NULL, &dest);
 }
+void Graphics::renderTexture(SDL_Texture* texture, int x, int y, int width, int height)
+{
+	SDL_Rect dest = { x, y, width, height };
+	SDL_RenderCopy(renderer, texture, NULL, &dest);
+}
+
 void Graphics::quit()
 {
 	//black
 	SDL_DestroyTexture(bR);
-	bR = nullptr; 
+	bR = nullptr;
 	SDL_DestroyTexture(bP);
-	bP = nullptr; 
+	bP = nullptr;
 	SDL_DestroyTexture(bQ);
-	bQ = nullptr; 
+	bQ = nullptr;
 	SDL_DestroyTexture(bK);
-	bK = nullptr; 
+	bK = nullptr;
 	SDL_DestroyTexture(bB);
-	bB = nullptr; 
+	bB = nullptr;
 	SDL_DestroyTexture(bN);
-	bN = nullptr; 
+	bN = nullptr;
 	//white
 	SDL_DestroyTexture(wR);
-	wR = nullptr; 
+	wR = nullptr;
 	SDL_DestroyTexture(wP);
-	wP = nullptr; 
+	wP = nullptr;
 	SDL_DestroyTexture(wQ);
-	wQ = nullptr; 
+	wQ = nullptr;
 	SDL_DestroyTexture(wK);
-	wK = nullptr; 
+	wK = nullptr;
 	SDL_DestroyTexture(wB);
-	wB = nullptr; 
+	wB = nullptr;
 	SDL_DestroyTexture(wN);
-	wN = nullptr; 
+	wN = nullptr;
 
 	SDL_DestroyTexture(background);
 	background = nullptr;
@@ -111,16 +117,22 @@ void Graphics::init() {
 	wN = loadTexture("img//wN.png");
 
 	background = loadTexture("img//background.jpg");
-	board=loadTexture("img//board.jpg")
+	board = loadTexture("img//board.jpg");
 }
 void Graphics::render(const Chess& game) {
 	prepareScene(background);
+	{	//blur board
+		SDL_SetTextureBlendMode(board, SDL_BLENDMODE_BLEND);
+		SDL_SetTextureAlphaMod(board, 210);
+	}
+	renderTexture(board, 350, 115, 400, 400);
 	for (int i = 0; i < BOARD_SIZE; i++)
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			int x = BOARD_X + j * CELL_SIZE;
 			int y = BOARD_Y + i * CELL_SIZE;
-			switch (game.board[i][j]) {
-			
-		};
-	presentScene();
+			if (i == 1) renderTexture(bP, x, y);
+			switch (game.used_cell[i][j]) {
+			};
+			presentScene();
+		}
 }

@@ -23,6 +23,8 @@ struct Graphics {
 
 	void renderTexture(SDL_Texture* texture, int x, int y);
 
+	void renderTexture(SDL_Texture* texture, int x, int y, int width, int height);
+
 	void quit();
 
 	void init();

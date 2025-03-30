@@ -21,7 +21,7 @@ void waitUntilKeyPressed()
 void processClickAt(int x, int y, Chess& game) {
     int clickedCol = (x - BOARD_X) / CELL_SIZE;
     int clickedRow = (y - BOARD_Y) / CELL_SIZE;
-    game.move(clickedRow, clickedCol);
+
 }
 
 int main(int argc, char* argv[])
