@@ -11,9 +11,9 @@ using namespace std;
 void processClickAt(int x, int y, Chess& game) {
     int clickedCol = (x - BOARD_X) / CELL_SIZE;
     int clickedRow = (y - BOARD_Y) / CELL_SIZE;
-	game.moves.push_back(clickedCol);
+	cout << "Clicked at " << clickedCol << ", " << clickedRow << endl;
 	game.moves.push_back(clickedRow);
-
+	game.moves.push_back(clickedCol);
 }
 
 int main(int argc, char* argv[])
@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
     int x, y;
     SDL_Event event;
     bool quit = false;
+
     while (!quit) {
         SDL_PollEvent(&event);
         switch (event.type) {
@@ -35,7 +36,8 @@ int main(int argc, char* argv[])
         case SDL_MOUSEBUTTONDOWN:
             SDL_GetMouseState(&x, &y);
             processClickAt(x, y, game);
-            processClickAt(x, y, game);
+            game.delete_useless_moves();
+			game.check_move();
             graphics.render(game);
             break;
         }

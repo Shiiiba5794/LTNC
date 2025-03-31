@@ -144,7 +144,7 @@ void Graphics::render(const Chess& game) {
 			case 'q': renderTexture(wQ, x, y); break;
 			case 'k': renderTexture(wK, x, y); break;
 			}
-			presentScene();
 		}
-	
+	presentScene();
+
 }
