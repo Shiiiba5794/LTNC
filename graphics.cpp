@@ -1,8 +1,12 @@
 ﻿#include <SDL.h>
 #include <SDL_image.h>
+#include <vector>
 #include "graphics.h"
 #include "logics.h"
 #include "defs.h"
+#include "moves.h"
+
+using namespace std;
 
 void Graphics::logErrorAndExit(const char* msg, const char* error)
 {
@@ -76,6 +80,8 @@ void Graphics::quit()
 	bB = nullptr;
 	SDL_DestroyTexture(bN);
 	bN = nullptr;
+	SDL_DestroyTexture(blackPromotedBoard);
+	blackPromotedBoard = nullptr;
 	//white
 	SDL_DestroyTexture(wR);
 	wR = nullptr;
@@ -89,6 +95,8 @@ void Graphics::quit()
 	wB = nullptr;
 	SDL_DestroyTexture(wN);
 	wN = nullptr;
+	SDL_DestroyTexture(whitePromotedBoard);
+	whitePromotedBoard = nullptr;
 
 	SDL_DestroyTexture(background);
 	background = nullptr;
@@ -108,6 +116,8 @@ void Graphics::init() {
 	bP = loadTexture("img//bP.png");
 	bB = loadTexture("img//bB.png");
 	bN = loadTexture("img//bN.png");
+	blackPromotedBoard = loadTexture("img//blackPromotedBoard.png");
+	checkmateBlack = loadTexture("img//checkmateBlack.png");
 	//white
 	wR = loadTexture("img//wR.png");
 	wQ = loadTexture("img//wQ.png");
@@ -115,6 +125,8 @@ void Graphics::init() {
 	wP = loadTexture("img//wP.png");
 	wB = loadTexture("img//wB.png");
 	wN = loadTexture("img//wN.png");
+	whitePromotedBoard = loadTexture("img//whitePromotedBoard.png");
+	checkmateWhite = loadTexture("img//checkmateWhite.png");
 
 	background = loadTexture("img//background.jpg");
 	board = loadTexture("img//board.jpg");
@@ -125,12 +137,21 @@ void Graphics::render(const Chess& game) {
 		SDL_SetTextureBlendMode(board, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(board, 210);
 	}
-	renderTexture(board, 350, 115, 400, 400);
+	renderTexture(board, BOARD_X, BOARD_Y, CELL_SIZE * 8, CELL_SIZE * 8);
+	if (game.moveRecords.size() >= 4) {
+		if (game.isPawnPromoted(game.moveRecords[game.moveRecords.size() - 4],
+			game.moveRecords[game.moveRecords.size() - 3],
+			game.moveRecords[game.moveRecords.size() - 2],
+			game.moveRecords[game.moveRecords.size() - 1])) {
+			renderTexture(whitePromotedBoard, PROMOTED_WHITE_BOARD_X, PROMOTED_WHITE_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+			renderTexture(blackPromotedBoard, PROMOTED_BLACK_BOARD_X, PROMOTED_BLACK_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+		}
+	}
 	for (int i = 0; i < BOARD_SIZE; i++)
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			int x = BOARD_X + j * CELL_SIZE;
 			int y = BOARD_Y + i * CELL_SIZE;
-			switch (game.piece_positions[i][j]) {
+			switch (game.piecePositions[i][j]) {
 			case 'P': renderTexture(bP, x, y); break;
 			case 'R': renderTexture(bR, x, y); break;
 			case 'N': renderTexture(bN, x, y); break;

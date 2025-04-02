@@ -10,7 +10,8 @@
 struct Graphics {
 	SDL_Renderer* renderer;
 	SDL_Window* window;
-	SDL_Texture* bP, * bN, * bK, * bQ, * bB, * bR, * wP, * wN, * wK, * wQ, * wB, * wR, * background,*board;
+	SDL_Texture* bP, * bN, * bK, * bQ, * bB, * bR, * wP, * wN, * wK, * wQ, * wB, * wR;
+	SDL_Texture*background, * board,*whitePromotedBoard,*blackPromotedBoard,*checkmateWhite,*checkmateBlack;
 
 	void logErrorAndExit(const char* msg, const char* error);
 

@@ -3,9 +3,18 @@
 
 const int SCREEN_WIDTH = 1100;
 const int SCREEN_HEIGHT = 630;
+
 #define WINDOW_TITLE "Chess"
 #define BOARD_X 350
 #define BOARD_Y 115
 #define CELL_SIZE 50
+#define PROMOTED_WHITE_BOARD_X 350
+#define PROMOTED_WHITE_BOARD_Y 50
+#define PROMOTED_BLACK_BOARD_X 538
+#define PROMOTED_BLACK_BOARD_Y 533
+#define PROMOTED_BOARD_WIDTH 212
+#define PROMOTED_BOARD_HEIGHT 47
+#define BOARD_SIZE 8
+#define EMPTY_CELL ' '
 
 #endif

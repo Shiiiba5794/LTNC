@@ -11,9 +11,10 @@ using namespace std;
 void processClickAt(int x, int y, Chess& game) {
     int clickedCol = (x - BOARD_X) / CELL_SIZE;
     int clickedRow = (y - BOARD_Y) / CELL_SIZE;
-	cout << "Clicked at " << clickedCol << ", " << clickedRow << endl;
-	game.moves.push_back(clickedRow);
-	game.moves.push_back(clickedCol);
+	game.moveRecords.push_back(clickedCol);
+	game.moveRecords.push_back(clickedRow);
+	
+	
 }
 
 int main(int argc, char* argv[])
@@ -36,8 +37,8 @@ int main(int argc, char* argv[])
         case SDL_MOUSEBUTTONDOWN:
             SDL_GetMouseState(&x, &y);
             processClickAt(x, y, game);
-            game.delete_useless_moves();
-			game.check_move();
+            game.control();
+            
             graphics.render(game);
             break;
         }

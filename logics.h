@@ -3,14 +3,18 @@
 
 #include <vector>
 #include <cmath>
+#include "defs.h"
 using namespace std;
-
 #define BOARD_SIZE 8
 #define EMPTY_CELL ' '
 
+
 struct Chess {
-	char piece_positions[BOARD_SIZE][BOARD_SIZE];
-	vector<int> moves; // moves[0] = x1, moves[1] = y1, moves[2] = x2, moves[3] = y2
+	char piecePositions[BOARD_SIZE][BOARD_SIZE];
+	
+	vector<int> moveRecords; // moveRecords[0] = x1, moveRecords[1] = y1, moveRecords[2] = x2, moveRecords[3] = y2
+	pair<int, int>blackKingPosition;
+	pair<int, int>whiteKingPosition;
 
 	Chess() { 
 		init();
@@ -18,15 +22,19 @@ struct Chess {
 
 	void init();
 
-	bool is_valid_move(int x1, int y1, int x2, int y2);
+	bool isValidMove(int x1, int y1, int x2, int y2);
 
-	bool is_path_clear(int x1, int y1, int x2, int y2);
+	bool isPathClear(int x1, int y1, int x2, int y2);
 
-	void move_piece(int x1, int y1, int x2, int y2);
+	void movePiece(int x1, int y1, int x2, int y2);
 
-	void delete_useless_moves();
+	bool isPawnPromoted(int x1, int y1, int x2, int y2) const;
 
-	void check_move();
+	void control();
+
+	bool checkmateBlack() const;
+	
+	bool checkmateWhite() const;
 };
 
 #endif

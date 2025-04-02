@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="logics.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="moves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
