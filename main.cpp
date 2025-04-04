@@ -5,17 +5,9 @@
 #include "defs.h"
 #include "graphics.h"
 #include "logics.h"
+#include "mouseInputs.h"
 
 using namespace std;
-
-void processClickAt(int x, int y, Chess& game) {
-    int clickedCol = (x - BOARD_X) / CELL_SIZE;
-    int clickedRow = (y - BOARD_Y) / CELL_SIZE;
-	game.moveRecords.push_back(clickedCol);
-	game.moveRecords.push_back(clickedRow);
-	
-	
-}
 
 int main(int argc, char* argv[])
 {
@@ -23,8 +15,8 @@ int main(int argc, char* argv[])
     graphics.init();
     Chess game;
     game.init();
+	MouseInputs mouseInputs;
     graphics.render(game);
-    int x, y;
     SDL_Event event;
     bool quit = false;
 
@@ -35,14 +27,19 @@ int main(int argc, char* argv[])
             quit = true;
             break;
         case SDL_MOUSEBUTTONDOWN:
-            SDL_GetMouseState(&x, &y);
-            processClickAt(x, y, game);
+			mouseInputs.updateMousePosition(event);
+			game.moveRecords.push_back(mouseInputs.clickedCol);
+			game.moveRecords.push_back(mouseInputs.clickedRow);
+			mouseInputs.removeExcessClicks(game);
+			cout << game.moveRecords.size() << endl;
+			for (int x : game.moveRecords)
+				cout << x << " ";
+			cout << endl;
             game.control();
-            
             graphics.render(game);
             break;
         }
-        SDL_Delay(0);
+       
     }
     graphics.quit();
     return 0;

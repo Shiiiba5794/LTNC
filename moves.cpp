@@ -25,7 +25,7 @@ bool Moves::isRookMove(int x1, int y1, int x2, int y2) {
 
 
 
-bool Moves::isPawnMove(int x1, int y1, int x2, int y2, bool isWhite, char board[8][8]) {
+bool Moves::isPawnMove(int x1, int y1, int x2, int y2, bool isWhite, const char  board[8][8]) {
 	int direction = isWhite ? -1 : 1;
 	if (x1 == x2) {
 		if (y2 == y1 + direction && board[y2][x2] == EMPTY_CELL)

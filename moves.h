@@ -15,7 +15,7 @@ struct Moves {
 
 	static bool isRookMove(int x1, int y1, int x2, int y2);
 
-	static bool isPawnMove(int x1, int y1, int x2, int y2, bool isWhite, char board[8][8]);
+	static bool isPawnMove(int x1, int y1, int x2, int y2, bool isWhite, const char  board[8][8]);
 };
 
 #endif 

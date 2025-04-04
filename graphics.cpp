@@ -138,16 +138,7 @@ void Graphics::render(const Chess& game) {
 		SDL_SetTextureAlphaMod(board, 210);
 	}
 	renderTexture(board, BOARD_X, BOARD_Y, CELL_SIZE * 8, CELL_SIZE * 8);
-	if (game.moveRecords.size() >= 4) {
-		if (game.isPawnPromoted(game.moveRecords[game.moveRecords.size() - 4],
-			game.moveRecords[game.moveRecords.size() - 3],
-			game.moveRecords[game.moveRecords.size() - 2],
-			game.moveRecords[game.moveRecords.size() - 1])) {
-			renderTexture(whitePromotedBoard, PROMOTED_WHITE_BOARD_X, PROMOTED_WHITE_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
-			renderTexture(blackPromotedBoard, PROMOTED_BLACK_BOARD_X, PROMOTED_BLACK_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
-		}
-	}
-	for (int i = 0; i < BOARD_SIZE; i++)
+	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			int x = BOARD_X + j * CELL_SIZE;
 			int y = BOARD_Y + i * CELL_SIZE;
@@ -166,6 +157,13 @@ void Graphics::render(const Chess& game) {
 			case 'k': renderTexture(wK, x, y); break;
 			}
 		}
+	}
+	if (game.moveRecords.size() >= 4) {
+		if (game.isPawnPromotedFlag) {
+			renderTexture(whitePromotedBoard, PROMOTED_WHITE_BOARD_X, PROMOTED_WHITE_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+			renderTexture(blackPromotedBoard, PROMOTED_BLACK_BOARD_X, PROMOTED_BLACK_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+		}
+	}
 	presentScene();
 
 }

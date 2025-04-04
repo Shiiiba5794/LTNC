@@ -136,12 +136,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="logics.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="mouseInput.cpp" />
     <ClCompile Include="moves.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="defs.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="logics.h" />
+    <ClInclude Include="mouseInputs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
