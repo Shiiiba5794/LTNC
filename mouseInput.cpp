@@ -5,8 +5,12 @@ void MouseInputs::updateMousePosition(SDL_Event& event) {
 	if (event.type == SDL_MOUSEBUTTONDOWN) {
 		x = event.button.x;
 		y = event.button.y;
-		clickedCol = (x - BOARD_X) / CELL_SIZE;
-		clickedRow = (y - BOARD_Y) / CELL_SIZE;
+		if (x < BOARD_X || x > BOARD_X + CELL_SIZE * 8) clickedCol = -1;
+		else if (y < BOARD_Y || y > BOARD_Y + CELL_SIZE * 8) clickedRow = -1;
+		else {
+			clickedCol = (x - BOARD_X) / CELL_SIZE;
+			clickedRow = (y - BOARD_Y) / CELL_SIZE;
+		}
 	}
 }
 

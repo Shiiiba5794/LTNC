@@ -4,7 +4,7 @@
 #include "graphics.h"
 #include "logics.h"
 #include "defs.h"
-#include "moves.h"
+#include "moveRules.h"
 
 using namespace std;
 

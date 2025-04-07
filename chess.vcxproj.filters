@@ -24,7 +24,7 @@
     <ClCompile Include="logics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moves.cpp">
+    <ClCompile Include="moveRules.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mouseInput.cpp">
@@ -42,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mouseInputs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moveRules.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

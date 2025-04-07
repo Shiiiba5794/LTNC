@@ -1,8 +1,9 @@
 #include <vector>
+#include <iostream>
 #include <cmath>
 #include <cctype>
 #include "logics.h"
-#include "moves.h"
+#include "moveRules.h"
 
 using namespace std;
 void Chess::init() {
@@ -27,8 +28,8 @@ void Chess::init() {
 }
 
 
-void Chess::deleteUselessMoves(int x1,int y1,int x2,int y2) {
-	if (moveRecords.size() % 4 == 0&&moveRecords.size()>=8) {
+void Chess::deleteUselessMoveRules(int x1, int y1, int x2, int y2) {
+	if (moveRecords.size() % 4 == 0 && moveRecords.size() >= 8) {
 
 		if (x1 == x2 && y1 == y2 && mouseInputs.isInBoardClick(x1, y1)) {
 			moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
@@ -47,7 +48,7 @@ void Chess::deleteUselessMoves(int x1,int y1,int x2,int y2) {
 		else if (!isValidMove(x1, y1, x2, y2)) {
 			moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
 		}
-		
+
 	}
 }
 
@@ -77,71 +78,82 @@ bool Chess::isPawnPromoted(int x1, int y1, int x2, int y2) const {
 
 bool Chess::isValidMove(int x1, int y1, int x2, int y2) const {
 	char piece = piecePositions[y1][x1];
+	if (MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions)) {
+		return true;
+	}
 	bool isValid = false;
-
 	switch (piece) {
 	case 'K':case'k':
-		isValid = Moves::isKingMove(x1, y1, x2, y2);
+		isValid = MoveRules::isKingMove(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'Q': case 'q':
-		isValid = Moves::isQueenMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2);
+		isValid = MoveRules::isQueenMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'B': case 'b':
-		isValid = Moves::isBishopMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2);
+		isValid = MoveRules::isBishopMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'N': case 'n':
-		isValid = Moves::isKnightMove(x1, y1, x2, y2);
+		isValid = MoveRules::isKnightMove(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'R': case 'r':
-		isValid = Moves::isRookMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2);
+		isValid = MoveRules::isRookMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'P':
-		isValid = Moves::isPawnMove(x1, y1, x2, y2, false, piecePositions);
+		isValid = MoveRules::isPawnMove(false, moveRecords, piecePositions) && isBlackTurn;
 		break;
 	case 'p':
-		isValid = Moves::isPawnMove(x1, y1, x2, y2, true, piecePositions);
+		isValid = MoveRules::isPawnMove(true, moveRecords, piecePositions) && isWhiteTurn;
 		break;
 	}
 	return isValid;
 }
 
 
-void Chess::movePiece(int x1, int y1, int x2, int y2) {
+void Chess::moveStandardPiece(int x1, int y1, int x2, int y2) {
 	char piece = piecePositions[y1][x1];
 	bool isValid = false;
 
 	switch (piece) {
-	case 'K': 
-		isValid = Moves::isKingMove(x1, y1, x2, y2);
+	case 'K':
+		isValid = MoveRules::isKingMove(x1, y1, x2, y2) && isBlackTurn;
 		if (isValid) {
 			blackKingPosition.first = x2;
 			blackKingPosition.second = y2;
 		}
 		break;
 	case'k':
-		isValid = Moves::isKingMove(x1, y1, x2, y2);
+		isValid = MoveRules::isKingMove(x1, y1, x2, y2) && isWhiteTurn;
 		if (isValid) {
 			whiteKingPosition.first = x2;
 			whiteKingPosition.second = y2;
 		}
 		break;
 	case 'Q': case 'q':
-		isValid = Moves::isQueenMove(x1, y1, x2, y2)&&isPathClear(x1,y1,x2,y2);
+		isValid = MoveRules::isQueenMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'B': case 'b':
-		isValid = Moves::isBishopMove(x1, y1, x2, y2)&&isPathClear(x1, y1, x2, y2);
+		isValid = MoveRules::isBishopMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'N': case 'n':
-		isValid = Moves::isKnightMove(x1, y1, x2, y2);
+		isValid = MoveRules::isKnightMove(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'R': case 'r':
-		isValid = Moves::isRookMove(x1, y1, x2, y2)&&isPathClear(x1, y1, x2, y2);
+		isValid = MoveRules::isRookMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) &&
+			((isupper(piece) && isBlackTurn) || (islower(piece) && isWhiteTurn));
 		break;
 	case 'P':
-		isValid = Moves::isPawnMove(x1, y1, x2, y2, false,piecePositions);
+		isValid = MoveRules::isPawnMove(false, moveRecords, piecePositions) && isBlackTurn;
 		break;
 	case 'p':
-		isValid = Moves::isPawnMove(x1, y1, x2, y2, true,piecePositions);
+		isValid = MoveRules::isPawnMove(true, moveRecords, piecePositions) && isWhiteTurn;
 		break;
 	}
 
@@ -149,25 +161,61 @@ void Chess::movePiece(int x1, int y1, int x2, int y2) {
 		isPawnPromotedFlag = isPawnPromoted(x1, y1, x2, y2);
 		piecePositions[y2][x2] = piece;
 		piecePositions[y1][x1] = EMPTY_CELL;
+		isWhiteTurn = !isWhiteTurn;
+		isBlackTurn = !isBlackTurn;
 	}
-	else return ;
-	
+	else return;
+
+}
+
+void Chess::performEnPassant() {
+	bool isValid = MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions);
+	if (isValid) {
+		int x1 = moveRecords[moveRecords.size() - 4];
+		int y1 = moveRecords[moveRecords.size() - 3];
+		int x2 = moveRecords[moveRecords.size() - 2];
+		int y2 = moveRecords[moveRecords.size() - 1];
+		if (isWhiteTurn) {
+			piecePositions[y1][x1] = EMPTY_CELL;
+			piecePositions[y2][x2] = 'p';
+			piecePositions[y2 + 1][x2] = EMPTY_CELL;
+		}
+		else if(isBlackTurn){
+			piecePositions[y1][x1] = EMPTY_CELL;
+			piecePositions[y2][x2] = 'P';
+			piecePositions[y2 - 1][x2] = EMPTY_CELL;
+		}
+		isWhiteTurn = !isWhiteTurn;
+		isBlackTurn = !isBlackTurn;
+	}
 }
 
 
 
 void Chess::control() {
-	if (moveRecords.size() % 4 == 0)
-	{
-		deleteUselessMoves(moveRecords[moveRecords.size() - 4], moveRecords[moveRecords.size() - 3], moveRecords[moveRecords.size() - 2], moveRecords[moveRecords.size() - 1]);
-		movePiece(moveRecords[moveRecords.size() - 4], moveRecords[moveRecords.size() - 3], moveRecords[moveRecords.size() - 2], moveRecords[moveRecords.size() - 1]);
+	if (moveRecords.size() % 4 == 0) {
+		deleteUselessMoveRules(moveRecords[moveRecords.size() - 4],
+			moveRecords[moveRecords.size() - 3],
+			moveRecords[moveRecords.size() - 2],
+			moveRecords[moveRecords.size() - 1]);
+		if (MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions)) {
+			performEnPassant();
+		}
+		else {
+			cout << "standard" << endl;
+			moveStandardPiece(moveRecords[moveRecords.size() - 4],
+				moveRecords[moveRecords.size() - 3],
+				moveRecords[moveRecords.size() - 2],
+				moveRecords[moveRecords.size() - 1]);
+		}
+		
 	}
 }
 bool Chess::checkmateBlack()const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
-			
-			
+
+
 		}
 	}
 	return false;
@@ -176,8 +224,8 @@ bool Chess::checkmateBlack()const {
 bool Chess::checkmateWhite()const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
-			
-			
+
+
 		}
 	}
 	return false;
