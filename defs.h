@@ -17,6 +17,10 @@ const int SCREEN_HEIGHT = 630;
 #define BOARD_SIZE 8
 #define EMPTY_CELL ' '
 #define PROMOTED_CELL_SIZE 47
+#define WIN_X 183
+#define WIN_Y 105
+#define WIN_WIDTH 700
+#define WIN_HEIGHT 400
 
 
 #endif

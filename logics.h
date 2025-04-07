@@ -15,8 +15,10 @@ struct Chess {
 	pair<int, int>whiteKingPosition;
 	bool isPawnPromotedFlag = false;
 	bool isWhiteTurn = true;
-	bool isBlackTurn = false;
-	bool isBlackKingInCheck = false;
+	bool checkmateBlack = false;
+	bool checkmateWhite = false;
+	bool whiteWin = false;
+	bool blackWin = false;
 
 
 
@@ -33,13 +35,17 @@ struct Chess {
 
 	void moveStandardPiece(int x1, int y1, int x2, int y2);
 
-	bool isValidMove(int x1, int y1, int x2, int y2) const;
+	bool isValidStandardMove(int x1, int y1, int x2, int y2) const;
+
+	bool isWhiteKingDead() const;
+
+	bool isBlackKingDead() const;
 
 	void control();
 
-	bool checkmateBlack() const;
+	bool isSquareAttackedByWhite(int x,int y) const;
 	
-	bool checkmateWhite() const;
+	bool isSquareAttackedByBlack(int x,int y) const;
 
 	void deleteUselessMoveRules(int x1,int y1,int x2,int y2);
 

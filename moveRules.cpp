@@ -67,6 +67,6 @@ bool MoveRules::isEnPassantPossible(bool isWhite, const vector<int>& moveRecords
 						return true;
 			}
 		}
-		return false;
 	}
+	return false;
 }

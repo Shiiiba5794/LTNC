@@ -118,6 +118,7 @@ void Graphics::init() {
 	bN = loadTexture("img//bN.png");
 	blackPromotedBoard = loadTexture("img//blackPromotedBoard.png");
 	checkmateBlack = loadTexture("img//checkmateBlack.png");
+	blackWin = loadTexture("img//blackWin.png");
 	//white
 	wR = loadTexture("img//wR.png");
 	wQ = loadTexture("img//wQ.png");
@@ -127,6 +128,7 @@ void Graphics::init() {
 	wN = loadTexture("img//wN.png");
 	whitePromotedBoard = loadTexture("img//whitePromotedBoard.png");
 	checkmateWhite = loadTexture("img//checkmateWhite.png");
+	whiteWin = loadTexture("img//whiteWin.png");
 
 	background = loadTexture("img//background.jpg");
 	board = loadTexture("img//board.jpg");
@@ -138,30 +140,44 @@ void Graphics::render(const Chess& game) {
 		SDL_SetTextureAlphaMod(board, 210);
 	}
 	renderTexture(board, BOARD_X, BOARD_Y, CELL_SIZE * 8, CELL_SIZE * 8);
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
-			int x = BOARD_X + j * CELL_SIZE;
-			int y = BOARD_Y + i * CELL_SIZE;
-			switch (game.piecePositions[i][j]) {
-			case 'P': renderTexture(bP, x, y); break;
-			case 'R': renderTexture(bR, x, y); break;
-			case 'N': renderTexture(bN, x, y); break;
-			case 'B': renderTexture(bB, x, y); break;
-			case 'Q': renderTexture(bQ, x, y); break;
-			case 'K': renderTexture(bK, x, y); break;
-			case 'p': renderTexture(wP, x, y); break;
-			case 'r': renderTexture(wR, x, y); break;
-			case 'n': renderTexture(wN, x, y); break;
-			case 'b': renderTexture(wB, x, y); break;
-			case 'q': renderTexture(wQ, x, y); break;
-			case 'k': renderTexture(wK, x, y); break;
+	if (game.whiteWin) {
+		renderTexture(whiteWin, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
+	}
+	else if (game.blackWin) {
+		renderTexture(blackWin, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
+	}
+	else {
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
+				int x = BOARD_X + j * CELL_SIZE;
+				int y = BOARD_Y + i * CELL_SIZE;
+				switch (game.piecePositions[i][j]) {
+				case 'P': renderTexture(bP, x, y); break;
+				case 'R': renderTexture(bR, x, y); break;
+				case 'N': renderTexture(bN, x, y); break;
+				case 'B': renderTexture(bB, x, y); break;
+				case 'Q': renderTexture(bQ, x, y); break;
+				case 'K':
+					if (game.checkmateBlack) renderTexture(checkmateBlack, x, y);
+					else renderTexture(bK, x, y);
+					break;
+				case 'p': renderTexture(wP, x, y); break;
+				case 'r': renderTexture(wR, x, y); break;
+				case 'n': renderTexture(wN, x, y); break;
+				case 'b': renderTexture(wB, x, y); break;
+				case 'q': renderTexture(wQ, x, y); break;
+				case 'k':
+					if (game.checkmateWhite)	renderTexture(checkmateWhite, x, y);
+					else renderTexture(wK, x, y);
+					break;
+				}
 			}
 		}
-	}
-	if (game.moveRecords.size() >= 4) {
-		if (game.isPawnPromotedFlag) {
-			renderTexture(whitePromotedBoard, PROMOTED_WHITE_BOARD_X, PROMOTED_WHITE_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
-			renderTexture(blackPromotedBoard, PROMOTED_BLACK_BOARD_X, PROMOTED_BLACK_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+		if (game.moveRecords.size() >= 4) {
+			if (game.isPawnPromotedFlag) {
+				renderTexture(whitePromotedBoard, PROMOTED_WHITE_BOARD_X, PROMOTED_WHITE_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+				renderTexture(blackPromotedBoard, PROMOTED_BLACK_BOARD_X, PROMOTED_BLACK_BOARD_Y, PROMOTED_BOARD_WIDTH, PROMOTED_BOARD_HEIGHT);
+			}
 		}
 	}
 	presentScene();
