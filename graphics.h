@@ -12,6 +12,7 @@ struct Graphics {
 	SDL_Texture* bP, * bN, * bK, * bQ, * bB, * bR, * wP, * wN, * wK, * wQ, * wB, * wR;
 	SDL_Texture*background, * board,*whitePromotedBoard,*blackPromotedBoard,*checkmateWhite,*checkmateBlack;
 	SDL_Texture*start,*whiteWin,*blackWin;
+	bool isStarting = true;
 
 	void logErrorAndExit(const char* msg, const char* error);
 
@@ -32,5 +33,7 @@ struct Graphics {
 	void init();
 
 	void render(const Chess& game);
+
+	void startGame();
 };
 #endif 

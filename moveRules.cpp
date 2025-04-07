@@ -1,6 +1,7 @@
 ﻿#include<cmath>
 #include"moveRules.h"
 #include"defs.h"
+#include"logics.h"
 
 bool MoveRules::isKingMove(int x1, int y1, int x2, int y2) {
 	return abs(x2 - x1) <= 1 && abs(y2 - y1) <= 1;
@@ -69,4 +70,45 @@ bool MoveRules::isEnPassantPossible(bool isWhite, const vector<int>& moveRecords
 		}
 	}
 	return false;
+}
+
+bool MoveRules::canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game) {
+	int kingRow = isWhite ? 7 : 0;
+	if (isWhite) {
+		if (board[7][4] == 'k' && board[kingRow][3] == EMPTY_CELL && board[kingRow][2] == EMPTY_CELL && board[7][0]=='r') {
+			if (game->isSquareAttackedByBlack(kingRow, 4) || game->isSquareAttackedByBlack(kingRow, 3) || game->isSquareAttackedByBlack(kingRow, 2)) {
+				return false;
+			}
+			return true;
+		}
+	}
+	else {
+		if (board[0][4] == 'K' && board[kingRow][3] == EMPTY_CELL && board[kingRow][2] == EMPTY_CELL && board[0][0] == 'R') {
+			if (game->isSquareAttackedByWhite(kingRow, 4) || game->isSquareAttackedByWhite(kingRow, 3) || game->isSquareAttackedByWhite(kingRow, 2)) {
+				return false;
+			}
+			return true;
+		}
+	}
+	
+}
+
+bool MoveRules::canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE], Chess* game) {
+	int kingRow = isWhite ? 7 : 0;
+	if (isWhite) {
+		if (board[7][4] == 'k' && board[kingRow][5] == EMPTY_CELL && board[kingRow][6] == EMPTY_CELL && board[7][7] == 'r') {
+			if (game->isSquareAttackedByBlack(kingRow, 4) || game->isSquareAttackedByBlack(kingRow, 5) || game->isSquareAttackedByBlack(kingRow, 6)) {
+				return false;
+			}
+			return true;
+		}
+	}
+	else {
+		if (board[0][4] == 'K' && board[kingRow][5] == EMPTY_CELL && board[kingRow][6] == EMPTY_CELL && board[0][7] == 'R') {
+			if (game->isSquareAttackedByWhite(kingRow, 4) || game->isSquareAttackedByWhite(kingRow, 5) || game->isSquareAttackedByWhite(kingRow, 6)) {
+				return false;
+			}
+			return true;
+		}
+	}
 }

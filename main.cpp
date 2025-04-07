@@ -11,36 +11,42 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    Graphics graphics;
-    graphics.init();
-    Chess game;
-    game.init();
+	Graphics graphics;
+	graphics.init();
+	Chess game;
+	game.init();
 	MouseInputs mouseInputs;
-    graphics.render(game);
-    SDL_Event event;
-    bool quit = false;
+	graphics.startGame();
+	SDL_Event event;
+	bool quit = false;
+	while (!quit) {
+		SDL_PollEvent(&event);
+		switch (event.type) {
+		case SDL_QUIT:
+			quit = true;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			if (!graphics.isStarting) {
+				mouseInputs.updateMousePosition(event);
+				game.moveRecords.push_back(mouseInputs.clickedCol);
+				game.moveRecords.push_back(mouseInputs.clickedRow);
+				mouseInputs.removeExcessClicks(game);
+				cout << game.moveRecords.size() << endl;
+				for (int x : game.moveRecords)
+					cout << x << " ";
+				cout << endl;
+				game.control();
+				graphics.render(game);
+				break;
+			}
+			else {
+				graphics.isStarting = false;
+				graphics.render(game);
+				break;
+			}
+		}
 
-    while (!quit) {
-        SDL_PollEvent(&event);
-        switch (event.type) {
-        case SDL_QUIT:
-            quit = true;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-			mouseInputs.updateMousePosition(event);
-			game.moveRecords.push_back(mouseInputs.clickedCol);
-			game.moveRecords.push_back(mouseInputs.clickedRow);
-			mouseInputs.removeExcessClicks(game);
-			cout << game.moveRecords.size() << endl;
-			for (int x : game.moveRecords)
-				cout << x << " ";
-			cout << endl;
-            game.control();
-            graphics.render(game);
-            break;
-        }
-       
-    }
-    graphics.quit();
-    return 0;
+	}
+	graphics.quit();
+	return 0;
 }

@@ -19,7 +19,13 @@ struct Chess {
 	bool checkmateWhite = false;
 	bool whiteWin = false;
 	bool blackWin = false;
-
+	//castling
+	bool hasWhiteKingMoved = false;
+	bool hasWhiteQueenSideRookMoved = false;
+	bool hasWhiteKingSideRookMoved = false;
+	bool hasBlackKingMoved = false;
+	bool hasBlackQueenSideRookMoved = false;
+	bool hasBlackKingSideRookMoved = false;
 
 
 	Chess() { 
@@ -50,6 +56,10 @@ struct Chess {
 	void deleteUselessMoveRules(int x1,int y1,int x2,int y2);
 
 	void performEnPassant();
+
+	void castleQueenSide(int x1,int y1,int x2,int y2);
+
+	void castleKingSide(int x1, int y1, int x2, int y2);
 };
 
 #endif
