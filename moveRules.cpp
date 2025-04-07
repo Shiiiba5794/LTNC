@@ -73,42 +73,45 @@ bool MoveRules::isEnPassantPossible(bool isWhite, const vector<int>& moveRecords
 }
 
 bool MoveRules::canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game) {
-	int kingRow = isWhite ? 7 : 0;
 	if (isWhite) {
-		if (board[7][4] == 'k' && board[kingRow][3] == EMPTY_CELL && board[kingRow][2] == EMPTY_CELL && board[7][0]=='r') {
-			if (game->isSquareAttackedByBlack(kingRow, 4) || game->isSquareAttackedByBlack(kingRow, 3) || game->isSquareAttackedByBlack(kingRow, 2)) {
+		if (board[7][4] == 'k' && board[7][3] == EMPTY_CELL && board[7][2] == EMPTY_CELL && board[7][0]=='r') {
+			if (game->isSquareAttackedByBlack(7, 4) || game->isSquareAttackedByBlack(7, 3) || game->isSquareAttackedByBlack(7, 2)) {
 				return false;
 			}
 			return true;
 		}
+		return false;
 	}
 	else {
-		if (board[0][4] == 'K' && board[kingRow][3] == EMPTY_CELL && board[kingRow][2] == EMPTY_CELL && board[0][0] == 'R') {
-			if (game->isSquareAttackedByWhite(kingRow, 4) || game->isSquareAttackedByWhite(kingRow, 3) || game->isSquareAttackedByWhite(kingRow, 2)) {
+		if (board[0][4] == 'K' && board[0][3] == EMPTY_CELL && board[0][2] == EMPTY_CELL && board[0][0] == 'R') {
+			if (game->isSquareAttackedByWhite(0, 4) || game->isSquareAttackedByWhite(0, 3) || game->isSquareAttackedByWhite(0, 2)) {
 				return false;
 			}
 			return true;
 		}
+		return false;
 	}
 	
 }
 
 bool MoveRules::canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE], Chess* game) {
-	int kingRow = isWhite ? 7 : 0;
 	if (isWhite) {
-		if (board[7][4] == 'k' && board[kingRow][5] == EMPTY_CELL && board[kingRow][6] == EMPTY_CELL && board[7][7] == 'r') {
-			if (game->isSquareAttackedByBlack(kingRow, 4) || game->isSquareAttackedByBlack(kingRow, 5) || game->isSquareAttackedByBlack(kingRow, 6)) {
+		if (board[7][4] == 'k' && board[7][5] == EMPTY_CELL && board[7][6] == EMPTY_CELL && board[7][7] == 'r') {
+			if (game->isSquareAttackedByBlack(7, 4) || game->isSquareAttackedByBlack(7, 5) || game->isSquareAttackedByBlack(7, 6)) {
 				return false;
 			}
 			return true;
 		}
+		return false;
 	}
 	else {
-		if (board[0][4] == 'K' && board[kingRow][5] == EMPTY_CELL && board[kingRow][6] == EMPTY_CELL && board[0][7] == 'R') {
-			if (game->isSquareAttackedByWhite(kingRow, 4) || game->isSquareAttackedByWhite(kingRow, 5) || game->isSquareAttackedByWhite(kingRow, 6)) {
+		if (board[0][4] == 'K' && board[0][5] == EMPTY_CELL && board[0][6] == EMPTY_CELL && board[0][7] == 'R') {
+			if (game->isSquareAttackedByWhite(0, 4) || game->isSquareAttackedByWhite(0, 5) || game->isSquareAttackedByWhite(0, 6)) {
 				return false;
 			}
 			return true;
 		}
+		return false;
 	}
+
 }

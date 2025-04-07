@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include <iostream>
 #include <cmath>
 #include <cctype>
@@ -45,7 +45,10 @@ void Chess::deleteUselessMoveRules(int x1, int y1, int x2, int y2) {
 				moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
 			}
 		}
-		else if (!isValidStandardMove(x1, y1, x2, y2)&&!MoveRules::isEnPassantPossible(isWhiteTurn,moveRecords,piecePositions)) {
+		else if (!isValidStandardMove(x1, y1, x2, y2) &&
+			!MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions) &&
+			!MoveRules::canCastleKingSide(isWhiteTurn, piecePositions, this) &&
+			!MoveRules::canCastleQueenSide(isWhiteTurn, piecePositions, this)) {
 			moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
 		}
 
@@ -111,14 +114,14 @@ bool Chess::isValidStandardMove(int x1, int y1, int x2, int y2) const {
 }
 
 bool Chess::isWhiteKingDead() const {
-	if (piecePositions[whiteKingPosition.second][whiteKingPosition.first] !='k') {
+	if (piecePositions[whiteKingPosition.second][whiteKingPosition.first] != 'k') {
 		return true;
 	}
 	return false;
 }
 
 bool Chess::isBlackKingDead() const {
-	if (piecePositions[blackKingPosition.second][blackKingPosition.first]!='K') {
+	if (piecePositions[blackKingPosition.second][blackKingPosition.first] != 'K') {
 		return true;
 	}
 	return false;
@@ -157,7 +160,7 @@ void Chess::moveStandardPiece(int x1, int y1, int x2, int y2) {
 		isValid = MoveRules::isKnightMove(x1, y1, x2, y2) &&
 			((isupper(piece) && !isWhiteTurn) || (islower(piece) && isWhiteTurn));
 		break;
-	case 'R': 
+	case 'R':
 		isValid = MoveRules::isRookMove(x1, y1, x2, y2) && isPathClear(x1, y1, x2, y2) && !isWhiteTurn;
 		if (isValid) {
 			if (x1 == 0 && y1 == 0) hasBlackQueenSideRookMoved = true;
@@ -183,6 +186,7 @@ void Chess::moveStandardPiece(int x1, int y1, int x2, int y2) {
 		isPawnPromotedFlag = isPawnPromoted(x1, y1, x2, y2);
 		piecePositions[y2][x2] = piece;
 		piecePositions[y1][x1] = EMPTY_CELL;
+		isWhiteTurn = !isWhiteTurn;
 		if (isSquareAttackedByWhite(blackKingPosition.first, blackKingPosition.second)) {
 			checkmateBlack = true;
 		}
@@ -191,8 +195,7 @@ void Chess::moveStandardPiece(int x1, int y1, int x2, int y2) {
 			checkmateWhite = true;
 		}
 		else checkmateWhite = false;
-		
-		isWhiteTurn = !isWhiteTurn;
+
 	}
 	else return;
 
@@ -209,13 +212,14 @@ void Chess::performEnPassant() {
 			piecePositions[y1][x1] = EMPTY_CELL;
 			piecePositions[y2][x2] = 'p';
 			piecePositions[y2 + 1][x2] = EMPTY_CELL;
+			isWhiteTurn = !isWhiteTurn;
 		}
-		else if(!isWhiteTurn){
+		else if (!isWhiteTurn) {
 			piecePositions[y1][x1] = EMPTY_CELL;
 			piecePositions[y2][x2] = 'P';
 			piecePositions[y2 - 1][x2] = EMPTY_CELL;
+			isWhiteTurn = !isWhiteTurn;
 		}
-		isWhiteTurn = !isWhiteTurn;
 	}
 }
 
@@ -227,27 +231,41 @@ void Chess::control() {
 			moveRecords[moveRecords.size() - 3],
 			moveRecords[moveRecords.size() - 2],
 			moveRecords[moveRecords.size() - 1]);
-		
+
 		if (MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions)) {
 			performEnPassant();
+			isWhiteTurn = !isWhiteTurn;
 		}
-		
+		else if (MoveRules::canCastleQueenSide(isWhiteTurn, piecePositions, this)) {
+			castleQueenSide(moveRecords[moveRecords.size() - 4],
+				moveRecords[moveRecords.size() - 3],
+				moveRecords[moveRecords.size() - 2],
+				moveRecords[moveRecords.size() - 1]);
+		}
+		else if (MoveRules::canCastleKingSide(isWhiteTurn, piecePositions, this)) {
+			castleKingSide(moveRecords[moveRecords.size() - 4],
+				moveRecords[moveRecords.size() - 3],
+				moveRecords[moveRecords.size() - 2],
+				moveRecords[moveRecords.size() - 1]);
+
+		}
 		else {
 			moveStandardPiece(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
 				moveRecords[moveRecords.size() - 1]);
+
 		}
 		if (isWhiteKingDead()) blackWin = true;
 		else if (isBlackKingDead()) whiteWin = true;
-		
+
 	}
 }
-bool Chess::isSquareAttackedByWhite(int x,int y)const {
+bool Chess::isSquareAttackedByWhite(int x, int y)const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (islower(piecePositions[i][j])) {
-				if(isValidStandardMove(j, i, x,y)) return true;
+				if (isValidStandardMove(j, i, x, y)) return true;
 			}
 
 		}
@@ -255,7 +273,7 @@ bool Chess::isSquareAttackedByWhite(int x,int y)const {
 	return false;
 }
 
-bool Chess::isSquareAttackedByBlack(int x,int y)const {
+bool Chess::isSquareAttackedByBlack(int x, int y)const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (isupper(piecePositions[i][j])) {
@@ -271,24 +289,31 @@ void Chess::castleQueenSide(int x1, int y1, int x2, int y2) {
 	if (isWhiteTurn) {
 		if (!hasWhiteKingMoved && !hasWhiteQueenSideRookMoved) {
 			if (x1 == 4 && y1 == 7 && x2 == 2 && y2 == 7) {
-				piecePositions[y1][x1] = EMPTY_CELL;
-				piecePositions[y1][x2] = 'k';
-				piecePositions[y1][x2 + 1] = 'r';
-				piecePositions[y1][x2 - 1] = EMPTY_CELL;
+				piecePositions[7][4] = EMPTY_CELL;
+				piecePositions[7][2] = 'k';
+				piecePositions[7][3] = 'r';
+				piecePositions[7][0] = EMPTY_CELL;
+				whiteKingPosition.first = 2;
+				whiteKingPosition.second = 7;
 				hasWhiteKingMoved = true;
 				hasWhiteQueenSideRookMoved = true;
+				isWhiteTurn = !isWhiteTurn;
 			}
 		}
 	}
 	else {
 		if (!hasBlackKingMoved && !hasBlackQueenSideRookMoved) {
 			if (x1 == 4 && y1 == 0 && x2 == 2 && y2 == 0) {
-				piecePositions[y1][x1] = EMPTY_CELL;
-				piecePositions[y1][x2] = 'K';
-				piecePositions[y1][x2 + 1] = 'R';
-				piecePositions[y1][x2 - 1] = EMPTY_CELL;
+				piecePositions[0][4] = EMPTY_CELL;
+				piecePositions[0][2] = 'K';
+				piecePositions[0][3] = 'R';
+				piecePositions[0][0] = EMPTY_CELL;
+				blackKingPosition.first = 2;
+				blackKingPosition.second = 0;
 				hasBlackKingMoved = true;
-				hasBlackQueenSideRookMoved = true;
+				hasBlackQueenSideRookMoved = true;		
+				isWhiteTurn = !isWhiteTurn;
+
 			}
 		}
 	}
@@ -298,24 +323,30 @@ void Chess::castleKingSide(int x1, int y1, int x2, int y2) {
 	if (isWhiteTurn) {
 		if (!hasWhiteKingMoved && !hasWhiteKingSideRookMoved) {
 			if (x1 == 4 && y1 == 7 && x2 == 6 && y2 == 7) {
-				piecePositions[y1][x1] = EMPTY_CELL;
-				piecePositions[y1][x2] = 'k';
-				piecePositions[y1][x2 - 1] = 'r';
-				piecePositions[y1][x2 + 1] = EMPTY_CELL;
+				piecePositions[7][4] = EMPTY_CELL;
+				piecePositions[7][6] = 'k';
+				piecePositions[7][5] = 'r';
+				piecePositions[7][7] = EMPTY_CELL;
+				whiteKingPosition.first = 6;
+				whiteKingPosition.second = 7;
 				hasWhiteKingMoved = true;
 				hasWhiteKingSideRookMoved = true;
+				isWhiteTurn = !isWhiteTurn;
 			}
 		}
 	}
 	else {
 		if (!hasBlackKingMoved && !hasBlackKingSideRookMoved) {
 			if (x1 == 4 && y1 == 0 && x2 == 6 && y2 == 0) {
-				piecePositions[y1][x1] = EMPTY_CELL;
-				piecePositions[y1][x2] = 'K';
-				piecePositions[y1][x2 - 1] = 'R';
-				piecePositions[y1][x2 + 1] = EMPTY_CELL;
+				piecePositions[0][4] = EMPTY_CELL;
+				piecePositions[0][6] = 'K';
+				piecePositions[0][5] = 'R';
+				piecePositions[0][7] = EMPTY_CELL;
+				blackKingPosition.first = 6;
+				blackKingPosition.second = 0;
 				hasBlackKingMoved = true;
 				hasBlackKingSideRookMoved = true;
+				isWhiteTurn = !isWhiteTurn;
 			}
 		}
 	}

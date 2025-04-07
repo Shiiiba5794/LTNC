@@ -2,10 +2,12 @@
 #include <vector>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "defs.h"
 #include "graphics.h"
 #include "logics.h"
 #include "mouseInputs.h"
+#include "audios.h"
 
 using namespace std;
 
@@ -13,6 +15,9 @@ int main(int argc, char* argv[])
 {
 	Graphics graphics;
 	graphics.init();
+	Audios audios;
+	audios.init();
+	audios.play(audios.backgroundMusic);
 	Chess game;
 	game.init();
 	MouseInputs mouseInputs;
@@ -48,5 +53,6 @@ int main(int argc, char* argv[])
 
 	}
 	graphics.quit();
+	audios.quit();
 	return 0;
 }
