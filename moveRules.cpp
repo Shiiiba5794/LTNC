@@ -72,9 +72,14 @@ bool MoveRules::isEnPassantPossible(bool isWhite, const vector<int>& moveRecords
 	return false;
 }
 
-bool MoveRules::canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game) {
-	if (isWhite) {
-		if (board[7][4] == 'k' && board[7][3] == EMPTY_CELL && board[7][2] == EMPTY_CELL && board[7][0]=='r') {
+bool MoveRules::canCastleQueenSide(bool isWhite, const vector<int>& moveRecords, const char board[BOARD_SIZE][BOARD_SIZE], Chess* game) {
+	int x1 = moveRecords[moveRecords.size() - 4];
+	int y1 = moveRecords[moveRecords.size() - 3];
+	int x2 = moveRecords[moveRecords.size() - 2];
+	int y2 = moveRecords[moveRecords.size() - 1];
+
+	if (isWhite && x1 == 4 && y1 == 7 && x2 == 2 && y2 == 7) {
+		if (board[7][4] == 'k' && board[7][3] == EMPTY_CELL && board[7][2] == EMPTY_CELL && board[7][0] == 'r') {
 			if (game->isSquareAttackedByBlack(7, 4) || game->isSquareAttackedByBlack(7, 3) || game->isSquareAttackedByBlack(7, 2)) {
 				return false;
 			}
@@ -82,7 +87,7 @@ bool MoveRules::canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BO
 		}
 		return false;
 	}
-	else {
+	else if (!isWhite && x1 == 4 && y1 == 0 && x2 == 2 && y2 == 0) {
 		if (board[0][4] == 'K' && board[0][3] == EMPTY_CELL && board[0][2] == EMPTY_CELL && board[0][0] == 'R') {
 			if (game->isSquareAttackedByWhite(0, 4) || game->isSquareAttackedByWhite(0, 3) || game->isSquareAttackedByWhite(0, 2)) {
 				return false;
@@ -91,11 +96,15 @@ bool MoveRules::canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BO
 		}
 		return false;
 	}
-	
+	return false;
 }
 
-bool MoveRules::canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE], Chess* game) {
-	if (isWhite) {
+bool MoveRules::canCastleKingSide(bool isWhite, const vector<int>& moveRecords, const char board[BOARD_SIZE][BOARD_SIZE], Chess* game) {
+	int x1 = moveRecords[moveRecords.size() - 4];
+	int y1 = moveRecords[moveRecords.size() - 3];
+	int x2 = moveRecords[moveRecords.size() - 2];
+	int y2 = moveRecords[moveRecords.size() - 1];
+	if (isWhite && x1 == 4 && y1 == 7 && x2 == 6 && y2 == 7) {
 		if (board[7][4] == 'k' && board[7][5] == EMPTY_CELL && board[7][6] == EMPTY_CELL && board[7][7] == 'r') {
 			if (game->isSquareAttackedByBlack(7, 4) || game->isSquareAttackedByBlack(7, 5) || game->isSquareAttackedByBlack(7, 6)) {
 				return false;
@@ -104,7 +113,7 @@ bool MoveRules::canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOA
 		}
 		return false;
 	}
-	else {
+	else if (!isWhite && x1 == 4 && y1 == 0 && x2 == 6 && y2 == 0) {
 		if (board[0][4] == 'K' && board[0][5] == EMPTY_CELL && board[0][6] == EMPTY_CELL && board[0][7] == 'R') {
 			if (game->isSquareAttackedByWhite(0, 4) || game->isSquareAttackedByWhite(0, 5) || game->isSquareAttackedByWhite(0, 6)) {
 				return false;
@@ -113,5 +122,5 @@ bool MoveRules::canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOA
 		}
 		return false;
 	}
-
+	return false;
 }

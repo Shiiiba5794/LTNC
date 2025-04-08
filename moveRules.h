@@ -27,9 +27,9 @@ struct MoveRules {
 
 	static bool isEnPassantPossible(bool isWhite, const vector<int>& moveRecords, const char board[BOARD_SIZE][BOARD_SIZE]);
 
-	static bool canCastleQueenSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game);
+	static bool canCastleQueenSide(bool isWhite,const vector<int>& moveRecords, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game);
 
-	static bool canCastleKingSide(bool isWhite, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game);
+	static bool canCastleKingSide(bool isWhite,const vector<int>& moveRecords, const char board[BOARD_SIZE][BOARD_SIZE],Chess*game);
 };
 
 #endif 

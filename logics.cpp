@@ -47,8 +47,8 @@ void Chess::deleteUselessMoveRules(int x1, int y1, int x2, int y2) {
 		}
 		else if (!isValidStandardMove(x1, y1, x2, y2) &&
 			!MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions) &&
-			!MoveRules::canCastleKingSide(isWhiteTurn, piecePositions, this) &&
-			!MoveRules::canCastleQueenSide(isWhiteTurn, piecePositions, this)) {
+			!MoveRules::canCastleKingSide(isWhiteTurn,moveRecords, piecePositions, this) &&
+			!MoveRules::canCastleQueenSide(isWhiteTurn,moveRecords, piecePositions, this)) {
 			moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
 		}
 
@@ -233,16 +233,19 @@ void Chess::control() {
 			moveRecords[moveRecords.size() - 1]);
 
 		if (MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions)) {
+			cout << "En Passant possible" << endl;
 			performEnPassant();
 			isWhiteTurn = !isWhiteTurn;
 		}
-		else if (MoveRules::canCastleQueenSide(isWhiteTurn, piecePositions, this)) {
+		else if (MoveRules::canCastleQueenSide(isWhiteTurn,moveRecords, piecePositions, this)) {
+			cout << "castle queen side possible" << endl;
 			castleQueenSide(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
 				moveRecords[moveRecords.size() - 1]);
 		}
-		else if (MoveRules::canCastleKingSide(isWhiteTurn, piecePositions, this)) {
+		else if (MoveRules::canCastleKingSide(isWhiteTurn,moveRecords, piecePositions, this)) {
+			cout << "castle king side possible" << endl;
 			castleKingSide(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
@@ -250,6 +253,7 @@ void Chess::control() {
 
 		}
 		else {
+			cout << "move standard piece" << endl;
 			moveStandardPiece(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
