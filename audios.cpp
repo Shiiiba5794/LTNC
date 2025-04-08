@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include "audios.h"
+#include "moveRules.h"
+#include<iostream>
 
 void Audios::initSDL_Mixer() {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
@@ -20,17 +22,28 @@ Mix_Music* Audios::loadMusic(const char* path)
 void Audios::init() {
 	initSDL_Mixer();
 	backgroundMusic = loadMusic("audio//background.mp3");
+	moveSound = loadSound("audio//move.mp3");
+	captureSound = loadSound("audio//capture.mp3");
+	checkmateSound = loadSound("audio//checkmate.mp3");
+	endgameSound = loadSound("audio//endgame.mp3");
 }
 void Audios::quit() {
 	Mix_FreeMusic(backgroundMusic);
 	backgroundMusic = nullptr;
+	Mix_FreeChunk(moveSound);
+	moveSound = nullptr;
+	Mix_FreeChunk(captureSound);
+	captureSound = nullptr;
+	Mix_FreeChunk(checkmateSound);
+	checkmateSound = nullptr;
+	Mix_FreeChunk(endgameSound);
+	endgameSound = nullptr;
+	Mix_CloseAudio();
 	Mix_Quit();
-	SDL_Quit();
 }
 void Audios::play(Mix_Music* gMusic)
 {
 	if (gMusic == nullptr) return;
-
 	if (Mix_PlayingMusic() == 0) {
 		Mix_PlayMusic(gMusic, -1);
 	}
@@ -57,4 +70,19 @@ void Audios::freeMusic(Mix_Music* music) {
 }
 void Audios::freeSound(Mix_Chunk* sound) {
 	Mix_FreeChunk(sound);
+}
+void Audios::playSound(Chess& game) {
+	if (game.moveRecords.size() % 4 == 0) {
+		if (game.numberOfPiecesAfterMove < game.numberOfPiecesBeforeMove) {
+			play(captureSound);
+		}
+		else if (game.numberOfPiecesAfterMove == game.numberOfPiecesBeforeMove) {
+			play(moveSound);
+		}
+		if (game.checkmateBlack || game.checkmateWhite) {
+			play(checkmateSound);
+		}if (game.whiteWin || game.blackWin) {
+			play(endgameSound);
+		}
+	}
 }

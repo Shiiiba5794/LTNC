@@ -8,6 +8,16 @@ using namespace std;
 
 
 struct Chess {
+	const char initialBoard[BOARD_SIZE][BOARD_SIZE] = {
+		{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'},
+		{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
+		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+		{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+		{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'}
+	};
 	char piecePositions[BOARD_SIZE][BOARD_SIZE];
 	vector<int> moveRecords; 
 	MouseInputs mouseInputs;
@@ -19,6 +29,8 @@ struct Chess {
 	bool checkmateWhite = false;
 	bool whiteWin = false;
 	bool blackWin = false;
+	int numberOfPiecesBeforeMove = 0;
+	int numberOfPiecesAfterMove = 0;
 	//castling
 	bool hasWhiteKingMoved = false;
 	bool hasWhiteQueenSideRookMoved = false;
@@ -38,6 +50,8 @@ struct Chess {
 	bool isPathClear(int x1, int y1, int x2, int y2) const;
 	
 	bool isPawnPromoted(int x1, int y1, int x2, int y2) const;
+
+	void promotePawn();
 
 	void moveStandardPiece(int x1, int y1, int x2, int y2);
 
@@ -60,6 +74,10 @@ struct Chess {
 	void castleQueenSide(int x1,int y1,int x2,int y2);
 
 	void castleKingSide(int x1, int y1, int x2, int y2);
+
+	void reset();
+
+	int countRemaningPieces();
 };
 
 #endif

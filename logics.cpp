@@ -7,17 +7,6 @@
 
 using namespace std;
 void Chess::init() {
-	const char initialBoard[BOARD_SIZE][BOARD_SIZE] = {
-		{'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'},
-		{'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
-		{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-		{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'}
-	};
-
 	for (int i = 0; i < BOARD_SIZE; i++)
 		for (int j = 0; j < BOARD_SIZE; j++)
 			piecePositions[i][j] = initialBoard[i][j];
@@ -47,8 +36,8 @@ void Chess::deleteUselessMoveRules(int x1, int y1, int x2, int y2) {
 		}
 		else if (!isValidStandardMove(x1, y1, x2, y2) &&
 			!MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions) &&
-			!MoveRules::canCastleKingSide(isWhiteTurn,moveRecords, piecePositions, this) &&
-			!MoveRules::canCastleQueenSide(isWhiteTurn,moveRecords, piecePositions, this)) {
+			!MoveRules::canCastleKingSide(isWhiteTurn, moveRecords, piecePositions, this) &&
+			!MoveRules::canCastleQueenSide(isWhiteTurn, moveRecords, piecePositions, this)) {
 			moveRecords.erase(moveRecords.end() - 4, moveRecords.end());
 		}
 
@@ -77,6 +66,13 @@ bool Chess::isPawnPromoted(int x1, int y1, int x2, int y2) const {
 		return true;
 	}
 	return false;
+}
+
+void Chess::promotePawn() {
+	int pawnPositionX = moveRecords[moveRecords.size() - 2];
+	int pawnPositionY = moveRecords[moveRecords.size() - 1];
+	if (isWhiteTurn) piecePositions[pawnPositionY][pawnPositionX] = 'Q';
+	else piecePositions[pawnPositionY][pawnPositionX] = 'q';
 }
 
 bool Chess::isValidStandardMove(int x1, int y1, int x2, int y2) const {
@@ -226,6 +222,7 @@ void Chess::performEnPassant() {
 
 
 void Chess::control() {
+	numberOfPiecesBeforeMove = countRemaningPieces();
 	if (moveRecords.size() % 4 == 0) {
 		deleteUselessMoveRules(moveRecords[moveRecords.size() - 4],
 			moveRecords[moveRecords.size() - 3],
@@ -233,33 +230,34 @@ void Chess::control() {
 			moveRecords[moveRecords.size() - 1]);
 
 		if (MoveRules::isEnPassantPossible(isWhiteTurn, moveRecords, piecePositions)) {
-			cout << "En Passant possible" << endl;
 			performEnPassant();
 			isWhiteTurn = !isWhiteTurn;
 		}
-		else if (MoveRules::canCastleQueenSide(isWhiteTurn,moveRecords, piecePositions, this)) {
-			cout << "castle queen side possible" << endl;
+		else if (MoveRules::canCastleQueenSide(isWhiteTurn, moveRecords, piecePositions, this)) {
 			castleQueenSide(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
 				moveRecords[moveRecords.size() - 1]);
 		}
-		else if (MoveRules::canCastleKingSide(isWhiteTurn,moveRecords, piecePositions, this)) {
-			cout << "castle king side possible" << endl;
+		else if (MoveRules::canCastleKingSide(isWhiteTurn, moveRecords, piecePositions, this)) {
 			castleKingSide(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
 				moveRecords[moveRecords.size() - 1]);
 
 		}
+		else if (isPawnPromotedFlag) {
+			promotePawn();
+			isPawnPromotedFlag = false;
+		}
 		else {
-			cout << "move standard piece" << endl;
 			moveStandardPiece(moveRecords[moveRecords.size() - 4],
 				moveRecords[moveRecords.size() - 3],
 				moveRecords[moveRecords.size() - 2],
 				moveRecords[moveRecords.size() - 1]);
 
 		}
+		numberOfPiecesAfterMove = countRemaningPieces();
 		if (isWhiteKingDead()) blackWin = true;
 		else if (isBlackKingDead()) whiteWin = true;
 
@@ -269,7 +267,26 @@ bool Chess::isSquareAttackedByWhite(int x, int y)const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (islower(piecePositions[i][j])) {
-				if (isValidStandardMove(j, i, x, y)) return true;
+				char piece = piecePositions[i][j];
+				bool isValid = false;
+				switch (piece) {
+				case'k':
+					isValid = MoveRules::isKingMove(j, i, x, y);
+					break;
+				case 'q':
+					isValid = MoveRules::isQueenMove(j, i, x, y) && isPathClear(j, i, x, y);
+					break;
+				case 'b':
+					isValid = MoveRules::isBishopMove(j, i, x, y) && isPathClear(j, i, x, y);
+					break;
+				case 'n':
+					isValid = MoveRules::isKnightMove(j, i, x, y);
+					break;
+				case 'p':
+					isValid = MoveRules::isPawnMove(true, moveRecords, piecePositions);
+					break;
+				}
+				if (isValid) return true;
 			}
 
 		}
@@ -281,9 +298,27 @@ bool Chess::isSquareAttackedByBlack(int x, int y)const {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			if (isupper(piecePositions[i][j])) {
-				if (isValidStandardMove(j, i, x, y))return true;
+				char piece = piecePositions[i][j];
+				bool isValid = false;
+				switch (piece) {
+				case 'K':
+					isValid = MoveRules::isKingMove(j, i, x, y);
+					break;
+				case 'Q':
+					isValid = MoveRules::isQueenMove(j, i, x, y) && isPathClear(j, i, x, y);
+					break;
+				case 'B':
+					isValid = MoveRules::isBishopMove(j, i, x, y) && isPathClear(j, i, x, y);
+					break;
+				case 'N':
+					isValid = MoveRules::isKnightMove(j, i, x, y);
+					break;
+				case 'P':
+					isValid = MoveRules::isPawnMove(false, moveRecords, piecePositions);
+					break;
+				}
+				if (isValid) return true;
 			}
-
 		}
 	}
 	return false;
@@ -315,7 +350,7 @@ void Chess::castleQueenSide(int x1, int y1, int x2, int y2) {
 				blackKingPosition.first = 2;
 				blackKingPosition.second = 0;
 				hasBlackKingMoved = true;
-				hasBlackQueenSideRookMoved = true;		
+				hasBlackQueenSideRookMoved = true;
 				isWhiteTurn = !isWhiteTurn;
 
 			}
@@ -354,4 +389,37 @@ void Chess::castleKingSide(int x1, int y1, int x2, int y2) {
 			}
 		}
 	}
+}
+
+void Chess::reset() {
+	for (int i = 0; i < BOARD_SIZE; i++)
+		for (int j = 0; j < BOARD_SIZE; j++)
+			piecePositions[i][j] = initialBoard[i][j];
+	moveRecords.clear();
+	moveRecords.resize(4, -1);
+	blackKingPosition.first = 4;
+	blackKingPosition.second = 0;
+	whiteKingPosition.first = 4;
+	whiteKingPosition.second = 7;
+	isPawnPromotedFlag = false;
+	isWhiteTurn = true;
+	checkmateBlack = false;
+	checkmateWhite = false;
+	whiteWin = false;
+	blackWin = false;
+	hasWhiteKingMoved = false;
+	hasWhiteQueenSideRookMoved = false;
+	hasWhiteKingSideRookMoved = false;
+	hasBlackKingMoved = false;
+	hasBlackQueenSideRookMoved = false;
+	hasBlackKingSideRookMoved = false;
+}
+
+int Chess::countRemaningPieces() {
+	int pieces = 0;
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			if (piecePositions[i][j] != EMPTY_CELL) pieces++;
+		}
+	}return pieces;
 }

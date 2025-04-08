@@ -2,9 +2,11 @@
 #define _AUDIOS__H
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include "logics.h"
 
 struct Audios {
-	Mix_Music* backgroundMusic = nullptr;
+	Mix_Music* backgroundMusic;
+	Mix_Chunk* moveSound,*captureSound,*checkmateSound,*endgameSound;
 
 	void initSDL_Mixer();
 
@@ -24,6 +26,7 @@ struct Audios {
 
 	void freeSound(Mix_Chunk* sound);
 
+	void playSound(Chess& game);
 };
 
 #endif

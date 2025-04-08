@@ -42,6 +42,10 @@ int main(int argc, char* argv[])
 				cout << endl;
 				game.control();
 				graphics.render(game);
+				audios.playSound(game);
+				if (game.whiteWin || game.blackWin) {
+					game.reset();
+				}
 				break;
 			}
 			else {
@@ -49,6 +53,7 @@ int main(int argc, char* argv[])
 				graphics.render(game);
 				break;
 			}
+
 		}
 
 	}

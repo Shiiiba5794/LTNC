@@ -80,8 +80,15 @@ void Graphics::quit()
 	bB = nullptr;
 	SDL_DestroyTexture(bN);
 	bN = nullptr;
+	SDL_DestroyTexture(blackWin);
+	blackWin = nullptr;
+	SDL_DestroyTexture(blackTurn);
+	blackTurn = nullptr;
+	SDL_DestroyTexture(checkmateBlack);
+	checkmateBlack = nullptr;
 	SDL_DestroyTexture(blackPromotedBoard);
 	blackPromotedBoard = nullptr;
+
 	//white
 	SDL_DestroyTexture(wR);
 	wR = nullptr;
@@ -95,6 +102,12 @@ void Graphics::quit()
 	wB = nullptr;
 	SDL_DestroyTexture(wN);
 	wN = nullptr;
+	SDL_DestroyTexture(whiteWin);
+	whiteWin = nullptr;
+	SDL_DestroyTexture(whiteTurn);
+	whiteTurn = nullptr;
+	SDL_DestroyTexture(checkmateWhite);
+	checkmateWhite = nullptr;
 	SDL_DestroyTexture(whitePromotedBoard);
 	whitePromotedBoard = nullptr;
 
@@ -102,6 +115,10 @@ void Graphics::quit()
 	background = nullptr;
 	SDL_DestroyTexture(board);
 	board = nullptr;
+	SDL_DestroyTexture(start);
+	start = nullptr;
+	
+	
 	IMG_Quit();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
@@ -119,6 +136,7 @@ void Graphics::init() {
 	blackPromotedBoard = loadTexture("img//blackPromotedBoard.png");
 	checkmateBlack = loadTexture("img//checkmateBlack.png");
 	blackWin = loadTexture("img//blackWin.png");
+	blackTurn = loadTexture("img//blackTurn.png");
 	//white
 	wR = loadTexture("img//wR.png");
 	wQ = loadTexture("img//wQ.png");
@@ -129,6 +147,7 @@ void Graphics::init() {
 	whitePromotedBoard = loadTexture("img//whitePromotedBoard.png");
 	checkmateWhite = loadTexture("img//checkmateWhite.png");
 	whiteWin = loadTexture("img//whiteWin.png");
+	whiteTurn = loadTexture("img//whiteTurn.png");
 
 	start = loadTexture("img//start.png");
 	background = loadTexture("img//background.jpg");
@@ -145,6 +164,14 @@ void Graphics::render(const Chess& game) {
 		SDL_SetTextureBlendMode(board, SDL_BLENDMODE_BLEND);
 		SDL_SetTextureAlphaMod(board, 210);
 		renderTexture(board, BOARD_X, BOARD_Y, CELL_SIZE * 8, CELL_SIZE * 8);
+		if (game.isWhiteTurn) {
+			renderTexture(wN, 800, 280,60,60);
+			renderTexture(whiteTurn, 760, 350,136,20);
+		}
+		else {
+			renderTexture(bN, 800, 280,60,60);
+			renderTexture(blackTurn, 760, 350,136,20);
+		}
 		if (game.whiteWin) {
 			renderTexture(whiteWin, WIN_X, WIN_Y, WIN_WIDTH, WIN_HEIGHT);
 		}
