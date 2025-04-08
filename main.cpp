@@ -36,10 +36,6 @@ int main(int argc, char* argv[])
 				game.moveRecords.push_back(mouseInputs.clickedCol);
 				game.moveRecords.push_back(mouseInputs.clickedRow);
 				mouseInputs.removeExcessClicks(game);
-				cout << game.moveRecords.size() << endl;
-				for (int x : game.moveRecords)
-					cout << x << " ";
-				cout << endl;
 				game.control();
 				graphics.render(game);
 				audios.playSound(game);

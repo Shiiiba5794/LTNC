@@ -2,7 +2,6 @@
 #include <SDL_mixer.h>
 #include "audios.h"
 #include "moveRules.h"
-#include<iostream>
 
 void Audios::initSDL_Mixer() {
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
