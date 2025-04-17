@@ -11,7 +11,7 @@ Cờ vua là một trò chơi trí tuệ dành cho hai người chơi, được 
 
 Mục tiêu của người chơi là **tiêu diệt vua** của đối phương.
 
-##2. Một số hình ảnh về game:
+## 2. Một số hình ảnh về game:
 
 
 ![Screenshot 2025-04-17 171317](https://github.com/user-attachments/assets/46d853b9-ce8b-4191-baaf-176d635d2c5a)
